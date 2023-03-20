@@ -1,9 +1,9 @@
 import io
-
+import time
 import paramiko
 
-source_filename = "/root/test/go1.20.2.linux-amd64.tar.gz"
-dest_filename = "go1.20.2.linux-amd64.tar.gz"
+source_filename = "/root/test/python3-10.tar"
+dest_filename = "python3-10.tar"
 ssh = paramiko.SSHClient()
 ssh.load_system_host_keys(r"C:\Users\longh\.ssh\known_hosts")
 ssh.connect(hostname="10.0.10.141", username="root")
@@ -32,10 +32,7 @@ class GeneratorBytesIO(io.BytesIO):
             return data
 
 
-chunk_size = 1024 * 1024
-
-
-def read_in_chunks(file_obj, chunk_size=8192):
+def read_in_chunks(file_obj, chunk_size=1024 * 1024):
     while True:
         data = file_obj.read(chunk_size)
         if not data:
@@ -43,11 +40,21 @@ def read_in_chunks(file_obj, chunk_size=8192):
         yield data
 
 
+start = time.perf_counter()
 source_file = source_sftp.open(source_filename)
 iodata = GeneratorBytesIO(read_in_chunks(source_file))
-dest_sftp.putfo(iodata, dest_filename)
+res = dest_sftp.putfo(iodata, dest_filename)
 source_file.close()
 source_sftp.close()
 dest_sftp.close()
 dest_transport.close()
 ssh.close()
+end = time.perf_counter()
+size = res.st_size
+print('source:', '10.0.10.141')
+print('destination:', '10.0.10.141 -P 2022')
+print("chunk_size为：1024*1024")
+print("传输文件为:", dest_filename)
+print("数据量为：", size, '字节')
+print("耗时：", end - start, 's')
+
