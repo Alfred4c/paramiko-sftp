@@ -24,7 +24,7 @@ async def copy_file(source, dest):
                         print(
                             f"File Name:go1.20.2.linux-amd64.tar.gz\n"
                             f"Size: {file_size} bytes. Time elapsed: {elapsed_time} seconds\n"
-                            f". Chunk size: 4096 bytes.")
+                            f". Chunk size: 4M bytes.")
 
 
 async def main():
