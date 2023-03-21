@@ -14,10 +14,11 @@ async def copy_file(source, dest):
                         start_time = time.monotonic()
                         async with dest_sftp.open(dest, 'wb') as dest_file:
                             while True:
-                                chunk = await source_file.read(4096)
-                                if not chunk:
+                                chunk = await source_file.read(4*1024*1024)
+                                if  chunk:
+                                    await dest_file.write(chunk)
+                                if len(chunk) < 4*1024*1024:
                                     break
-                                await dest_file.write(chunk)
                         end_time = time.monotonic()
                         elapsed_time = end_time - start_time
                         print(
